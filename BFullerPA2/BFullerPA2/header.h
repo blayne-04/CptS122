@@ -1,6 +1,8 @@
 #ifndef MUSIC_MANAGER
 #define MUSIC_MANAGER
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // Imports
 #include <stdio.h>
 #include <string.h>
@@ -20,10 +22,10 @@ typedef struct duration {
 } Duration;
 
 typedef struct movie {
-	char artist[30];
+	char artist[50];
 	char albumTitle[50];
 	char songTitle[50];
-	char genre[20];
+	char genre[50];
 	Duration songLen;
 	int timesPlayed;
 	int rating;

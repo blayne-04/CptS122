@@ -6,27 +6,27 @@ int main(void) {
     //Example data for testing
     Music songs[10] = {
         {
-            .artist = "Kanye West",
+            .artist = "Test1, Test1, Test1 Test 1 1 Test",
             .albumTitle = "Graduation",
-            .songTitle = "Stronger",
-            .genre = "Hip-Hop",
+            .songTitle = "Testing song title number 1",
+            .genre = "Programming",
             .songLen = {.minutes = 5, .seconds = 12 },
             .timesPlayed = 42,
             .rating = 5
         },
         {
-            .artist = "Radiohead",
-            .albumTitle = "OK Computer",
-            .songTitle = "No Surprises",
-            .genre = "Alternative",
+            .artist = "TEST2, TEST2",
+            .albumTitle = "TEST2",
+            .songTitle = "Testing song number 2",
+            .genre = "Coding",
             .songLen = {.minutes = 3, .seconds = 49 },
             .timesPlayed = 17,
             .rating = 4
         },
         {
-            .artist = "Daft Punk",
-            .albumTitle = "Discovery",
-            .songTitle = "Harder Better Faster Stronger",
+            .artist = "TEST3, TEST3",
+            .albumTitle = "TEST3",
+            .songTitle = "Testing a song title number 3",
             .genre = "Electronic",
             .songLen = {.minutes = 3, .seconds = 45 },
             .timesPlayed = 30,

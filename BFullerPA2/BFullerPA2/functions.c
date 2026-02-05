@@ -204,23 +204,70 @@ bool store(Node* pHead) {
 
 bool editNode(char* target, Node** pHead) {
 	Node* curNode = *pHead;
-	
-	//Jump to the matching node, if it doesnt exist in the list, we skip this loop entirely
-	while (curNode != NULL && strcmp(curNode->data.albumTitle, target) != 0 ){
-		curNode = curNode->pNext;
-	}
+	int matchCounter = 0;
+	Node* Addresses[100];
+	char buffer[50];
 
-	//Now that we've exited the while loop, there's 2 possibilities, 1. the list is empty/target is not included or
-	//2. We have arrived at the target and would now like to edit the node.
-	
-	//If there's nothing in the list or the target hasnt been found, were not editing so return false
+	//If there's nothing in the list, were not editing so return false
 	if (curNode == NULL) {
 		return false;
 	}
-	//Else perform the edit
-	editAttribute(editData);
+
+	//Iterate through the nodes, whenever a match is found, add it to the count and store the index
+	while (curNode != NULL){
+
+		if (strcmp(curNode->data.albumTitle, target) == 0) {
+			++matchCounter;
+			printf("Would you like to edit this entry (yes/no)?\nArtist: %s, Song: %s", curNode->data.artist, curNode->data.songTitle);
+			scanf("%s", buffer);
+
+			if (strcmp("yes", buffer) == 0) { // if user says yes
+				printf("Which property?\n");
+				printf("1. artist, 2. song title, 3. genre, 5. song len, 6. times played, 7. rating\n");
+				scanf("%d", buffer);
+				
+			}
+
+		}
+
+		curNode = curNode->pNext;
+	
+	editAttribute();
 	
 
 }
 
-bool editAttribute()
+/*
+Potential Approaches
+
+1. prompt the user, take in all data as strings, parse based on a user selected option, this isnt very nice..
+
+2. prompt the user for what they want to update, call a specialized function for each type of update, this seems sort of
+redundant, maybe couple the same type of fields together?
+
+3. implement a UI to select which option, then have the same type of code running in the background
+*/
+//bool editAttribute()
+
+
+/*
+- What must “edit” do?
+The “edit” command must allow the user to find a record in the list by artist. If there
+are multiple records with the same artist, then your program must prompt the user
+which one to edit. The user may modify all of the attributes in the record.
+
+- What must “rate” do?
+The “rate” command must allow the user to assign a value of 1 – 5 to a song; 1 is the
+lowest rating and 5 is the highest rating. The rating will replace the previous rating.
+
+- What must “play” do?
+The “play” command must allow the user to select a song, and must start “playing”
+each song in order from the current song. “Playing” the song for this assignment
+means displaying the contents of the record that represents the song for a short
+period of time, clearing the screen and showing the next record in the list, etc. This
+continues until all songs have been played.
+
+- What must “exit” do?
+The “exit” command saves the most recent list to the musicPlayList.csv file.
+This command will completely overwrite the previous contents in the file.
+*/
