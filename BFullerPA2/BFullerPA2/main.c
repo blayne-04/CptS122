@@ -1,5 +1,17 @@
 #include "header.h"
 
+/****************************************
+* Author: Blayne Fuller
+* 
+* Term: SPR26
+* Course: CptS122 
+* Assignment: MUSIC MANAGER - PA 2&3
+* 
+* Description: This program leverages doubly
+* linked lists to store music data on the
+* backend and SDL for UI/UX and media
+****************************************/
+
 int main(void) {
 	Node* pHead = NULL;
 
@@ -33,14 +45,4 @@ int main(void) {
             .rating = 5
         }
     };
-
-    bool success = insertFront(&pHead, songs[0]);
-    printf("Success Status1: %d\n", success);
-    success = insertFront(&pHead, songs[1]);
-    printf("Success Status2: %d\n", success);
-    success = insertFront(&pHead, songs[2]);
-    printf("Success Status3: %d\n", success);
-
-    printList(pHead);
-
 }

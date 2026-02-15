@@ -3,15 +3,20 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-// Imports
+/*************************
+*        IMPORTS
+*************************/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define NUM_FIELDS 7
 
-// Type declarations
+/*************************
+*    TYPE DECLARATIONS
+*************************/
 typedef enum fields {
 	ARTIST, ALBUM, SONG, GENRE, MIN, SEC, TIMES_PLAYED, RATE
 } Fields;
@@ -37,12 +42,33 @@ typedef struct node {
 	struct node* pLast;
 }Node;
 
-//Core doubly linked list initialization functions
+/**************************************
+*           INITIALIZATION
+***************************************/
 Node* makeNode(Music data);
 bool insertFront(Node** pHead, Music data);
-void printList(Node* pHead);
+void display(Node* pHead, char* artist);
 
-//Doubly linked list operations
-bool editNode(char* target, Node** pHead, char* editData);
+/**************************************
+*           OPERATIONS
+***************************************/
+//bool editNode(char* target, Node** pHead, char* editData);
+bool load(Node** pHead);
+bool store(Node* pHead);
+bool editNode(Node* target);
+bool rate(Node** pHead);
+bool play(Node* targetNode);
+bool deleteEntry(Node** pHead, char* targetSong);
+
+/**************************************
+*		   CONTROL FLOW
+***************************************/
+int findMatches(char* target, Node** pHead, Node* Addresses[]);
+bool editInteraction(Node** pHead);
+void clearBuffer();
+void clearScreen(int n);
+void delay(int ms);
+bool playInteraction(Node** pHead);
+bool exit(Node* pHead);
 
 #endif
