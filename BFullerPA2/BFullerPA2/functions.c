@@ -24,11 +24,63 @@ Node* makeNode(Music data) {
 }
 
 /****************************************
+* Prompt user for data to be inserted
+****************************************/
+bool insertInteraction(Node** pHead) {
+	if (*pHead == NULL) return false;
+	Music temp;
+	char buffer[100];
+
+	printf("Arist:\n");
+	fgets(temp.artist, 50, stdin);
+	strtok(temp.artist, "\n");
+
+	printf("Album:\n");
+	fgets(temp.albumTitle, 50, stdin);
+	strtok(temp.albumTitle, "\n");
+
+	printf("Song:\n");
+	fgets(temp.songTitle, 50, stdin);
+	strtok(temp.songTitle, "\n");
+
+	printf("Genre:\n");
+	fgets(temp.genre, 50, stdin);
+	strtok(temp.genre, "\n");
+
+	printf("Minutes:\n");
+	temp.songLen.minutes = atoi(fgets(buffer, sizeof(buffer), stdin));
+
+	printf("Seconds:\n");
+	do {
+		temp.songLen.seconds = atoi(fgets(buffer, sizeof(buffer), stdin));
+	} while (temp.songLen.seconds > 59 || temp.songLen.seconds < 0);
+
+	printf("Times Played:\n");
+	temp.timesPlayed = atoi(fgets(buffer, sizeof(buffer), stdin));
+
+	do {
+		printf("Rate (1 -> 5):\n");
+		temp.rating = atoi(fgets(buffer, sizeof(buffer), stdin));
+	} while (temp.rating < 1 || temp.rating > 5);
+
+	return insertFront(pHead, temp);
+}
+
+/****************************************
 * Insert node at front of list
 ****************************************/
 bool insertFront(Node** pHead, Music data) {
 	bool success = false;
 	Node* pIn = makeNode(data);
+	
+	if (data.songLen.seconds < 0 || data.songLen.seconds > 59) {
+		printf("Invalid num of seconds!\n");
+		return false;
+	}
+	if (data.timesPlayed < 0) {
+		printf("Invalid num of times played!\n");
+		return false;
+	}
 
 	if (pIn != NULL) { //If there's memory on the heap for our node
 		success = true; //Then we made a node.
@@ -48,6 +100,23 @@ bool insertFront(Node** pHead, Music data) {
 	}
 
 	return success; //returns if it was inserted or not
+}
+
+/****************************************
+* Prompt user for a song name, then pass
+* in that song name to deleteEntry
+****************************************/
+bool deleteInteraction(Node** pHead) {
+	char buffer[100];
+
+	system("cls");
+	printf("Enter the title of the song you'd like to delete\n");
+
+	fgets(buffer, sizeof(buffer), stdin);
+	strtok(buffer, "\n"); //strip newline
+
+	return deleteEntry(pHead, buffer);
+
 }
 
 /****************************************
@@ -87,15 +156,48 @@ bool deleteEntry(Node** pHead, char* targetSong) {
 }
 
 /****************************************
+* Prompt user what artist to display
+* or if theyd like to just display all
+****************************************/
+void displayInteraction(Node* pHead) {
+	char artist[100];
+	char buffer[10];
+	int selection = 0;
+
+	printf("Select Mode\n");
+	printf("1. Display All\n");
+	printf("2. Display By Artist\n");
+	do {
+		selection = atoi(fgets(buffer, sizeof(buffer), stdin));
+	} while (selection < 1 || selection > 2);
+
+	if (selection == 1) {
+		if (display(pHead, NULL) == false) {
+			printf("List is empty!\n");
+		}
+	}
+	else {
+		fgets(artist, sizeof(artist), stdin);
+		strtok(artist, "\n");
+
+		if (display(pHead, artist) == false) {
+			printf("That artist wasn't found!\n");
+		}
+	}
+}
+
+/****************************************
 * Simple function, just print out the list, 
 * if user specifies by artist, print by 
 * artist instead
 *  Precondition: if no artist is present, 
 * pass in NULL for artist
 ****************************************/
-void display(Node* pHead, char* artist) {
+bool display(Node* pHead, char* artist) {
 	Node* pCur = pHead;
 	int counter = 0;
+
+	if (pCur == NULL) return false;
 
 	while (pCur != NULL) {
 		if (artist == NULL || strcmp(pCur->data.artist,artist) == 0) { //if no artist is specified, or artist matches our target, print data
@@ -114,6 +216,12 @@ void display(Node* pHead, char* artist) {
 
 		pCur = pCur->pNext; // move it along no matter what
 	}
+	
+	if (counter > 0 || artist == NULL) {
+		return true;
+	}
+
+	return false;
 }
 
 /****************************************
@@ -221,6 +329,7 @@ bool load(Node **pHead) {
 	FILE* musicData = fopen("musicPlayList.csv", "r");
 
 	if (musicData == NULL) {
+		printf("No music data!\n");
 		return false;
 	}
 
@@ -231,6 +340,7 @@ bool load(Node **pHead) {
 
 	fclose(musicData);
 
+	printf("Successfully loaded music data.\n");
 	return true;
 }
 
@@ -270,6 +380,7 @@ bool store(Node* pHead) {
 ****************************************/
 bool editInteraction(Node** pHead) {
 	char targetArtist[100];
+	char songNum[10];
 	Node* Addresses[100];
 	int len = 0;
 	int targetSong = 0;
@@ -280,9 +391,13 @@ bool editInteraction(Node** pHead) {
 	// remove trailing newline
 	strtok(targetArtist, "\n");
 
-	system('cls');
+	system("cls");
+
 	len = findMatches(targetArtist, pHead, Addresses);
-	if (len == 0) return false;
+	if (len == 0) {
+		printf("That song isn't in the list!\n");
+		return false;
+	}
 
 	for (int iterator = 0; iterator < len; iterator++) {
 		printf("Song %d: %s, %s\n", iterator, Addresses[iterator]->data.songTitle, Addresses[iterator]->data.albumTitle);
@@ -292,10 +407,10 @@ bool editInteraction(Node** pHead) {
 	do {
 		printf("------------------------\n");
 		printf("Enter a song num to edit\n");
-		scanf("%d", &targetSong);
+		targetSong = atoi(fgets(songNum, sizeof(songNum), stdin));
 	} while (0 > targetSong || targetSong >= len);
 
-	system('cls');
+	system("cls");
 
 	Node* target = Addresses[targetSong];
 	editNode(target);
@@ -338,68 +453,70 @@ int findMatches(char* target, Node** pHead, Node* Addresses[]) {
 ****************************************/
 bool editNode(Node* target) {
 	int option;
+	char buffer[100];
 
 	if (target == NULL) {
 		printf("Edit Node Target Is Empty");
 		return false;
 	}
 
-	system('cls');
+	system("cls");
 	printf("Which property would you like to edit\n");
 	printf("1. Artist Name\n");
 	printf("2. Song Title\n");
-	printf("3. Genre\n");
-	printf("4. Song Length\n");
-	printf("5. Times Played\n");
-	printf("6. Rating\n");
-
+	printf("3. Album Title\n");
+	printf("4. Genre\n");
+	printf("5. Song Length\n");
+	printf("6. Times Played\n");
+	printf("7. Rating\n");
 	do {
-		scanf("%d", &option);
-	} while (1 > option || option > 6);
+		option = atoi(fgets(buffer, sizeof(buffer), stdin));
+	} while (1 > option || option > 7);
 
-	system('cls');
+	system("cls");
 	
 	// IF YOU HAVE ANY RECOMMENDATIONS ABOUT HOW TO DO THIS IN A SHORTER FORMAT PLEASE LET ME KNOW
 	switch (option) {
 	case 1: // ARTIST
 		printf("Update artist:\n");
-		clearBuffer();
 		fgets(target->data.artist, 50, stdin);
 		strtok(target->data.artist, "\n");
 		break;
 
 	case 2: // EDIT SONG TITLE
 		printf("Update song title:\n");
-		clearBuffer();
 		fgets(target->data.songTitle, 50, stdin);
 		strtok(target->data.songTitle, "\n");
 		break;
-
-	case 3: // EDIT GENRE
+	case 3: // EDIT ALBUM TITLE
+		printf("Update album title:\n");
+		fgets(target->data.albumTitle, 50, stdin);
+		strtok(target->data.albumTitle, "\n");
+		break;
+	case 4: // EDIT GENRE
 		printf("Update genre:\n");
-		clearBuffer();
 		fgets(target->data.genre, 50, stdin);
 		strtok(target->data.genre, "\n");
 		break;
 
-	case 4: //EDIT SONG LENGTH
+	case 5: //EDIT SONG LENGTH
 		printf("Update minutes:\n");
-		scanf("%d", &target->data.songLen.minutes);
+		target->data.songLen.minutes = atoi(fgets(buffer, sizeof(buffer), stdin));
 		printf("Update seconds:\n");
 		do {
-		scanf("%d", &target->data.songLen.seconds);
+		target->data.songLen.seconds = atoi(fgets(buffer, sizeof(buffer), stdin));
 		} while (target->data.songLen.seconds > 59 || target->data.songLen.seconds < 0);
 		break;
 
-	case 5: //EDIT TIMES PLAYED
+	case 6: //EDIT TIMES PLAYED
 		printf("Update times played:\n");
-		scanf("%d", &target->data.timesPlayed);
+		target->data.timesPlayed = atoi(fgets(buffer, sizeof(buffer), stdin));
 		break;
 
-	case 6: // EDIT RATING
+	case 7: // EDIT RATING
 		do {
-			printf("Update rating (1–5):\n");
-			scanf("%d", &target->data.rating);
+			printf("Update rating (1 -> 5):\n");
+			target->data.rating = atoi(fgets(buffer, sizeof(buffer), stdin));
 		} while (target->data.rating < 1 || target->data.rating > 5);
 		break;
 
@@ -411,15 +528,6 @@ bool editNode(Node* target) {
 }
 
 /****************************************
-* Used in scenarios where I call fgets
-* after scanf, clear the newline and prevent
-* fgets from reading an empty line
-****************************************/
-void clearBuffer() {
-	while (getchar() != '\n');
-}
-
-/****************************************
 * Rate song, takes user inputted song name
 * Allows the user to update their rating
 * 1-5, supports duplicate song names
@@ -427,6 +535,7 @@ void clearBuffer() {
 bool rate(Node** pHead) {
 	char targetSong[100];
 	Node* Addresses[100];
+	char numBuffer[10];
 	int len = 0;
 	int selection = 0;
 
@@ -436,7 +545,7 @@ bool rate(Node** pHead) {
 	// remove trailing newline
 	strtok(targetSong, "\n");
 
-	system('cls');
+	system("cls");
 
 	len = findMatches(targetSong, pHead, Addresses);
 
@@ -456,15 +565,15 @@ bool rate(Node** pHead) {
 		do {
 			printf("------------------------\n");
 			printf("Enter which song you'd like to rate\n");
-			scanf("%d", &selection);
+			selection = atoi(fgets(numBuffer, sizeof(numBuffer), stdin));
 		} while (0 > selection || selection >= len);
 	}
 
-	system('cls');
+	system("cls");
 
 	do {
-		printf("Enter rating (1–5):\n");
-		scanf("%d", &Addresses[selection]->data.rating);
+		printf("Enter rating (1 -> 5):\n");
+		Addresses[selection]->data.rating = atoi(fgets(numBuffer, sizeof(numBuffer), stdin));
 	} while (Addresses[selection]->data.rating < 1 || Addresses[selection]->data.rating > 5);
 
 	return true;
@@ -498,6 +607,7 @@ void delay(int ms) {
 bool playInteraction(Node** pHead) {
 	char targetSong[100];
 	Node* Addresses[100];
+	char numBuffer[10];
 	int len = 0;
 	int selection = 0;
 
@@ -507,7 +617,7 @@ bool playInteraction(Node** pHead) {
 	// remove trailing newline
 	strtok(targetSong, "\n");
 
-	system('cls');
+	system("cls");
 
 	len = findMatches(targetSong, pHead, Addresses);
 	if (len == 0) {
@@ -525,7 +635,7 @@ bool playInteraction(Node** pHead) {
 		do {
 			printf("------------------------\n");
 			printf("Enter which song you'd like to play\n");
-			scanf("%d", &selection);
+			selection = atoi(fgets(numBuffer, sizeof(numBuffer), stdin));
 		} while (0 > selection || selection >= len);
 	}
 
@@ -555,8 +665,8 @@ bool play(Node* targetNode) {
 				delay(200);
 			}
 
-			clearScreen(1);
 		}
+		clearScreen(1);
 
 		system("cls");
 		pCur = pCur->pNext;
@@ -565,6 +675,288 @@ bool play(Node* targetNode) {
 	return true;
 }
 
-bool exit(Node* pHead) {
+/****************************************
+* Exit the Program
+****************************************/
+bool exitProg(Node* pHead) {
 	return store(pHead);
+}
+
+/****************************************
+* Prompt user for which property they want
+* to sort the list by
+****************************************/
+bool sortInteraction(Node** pHead) {
+	int option = 0;
+	char buffer[10];
+
+	if (*pHead == NULL) return false;
+
+	do {
+		system("cls");
+
+		printf("Which property would you like to sort by?:\n");
+		printf("1. Artist Name\n");
+		printf("2. Album Title\n");
+		printf("3. Rating\n");
+		printf("4. Times Plated\n");
+
+		option = atoi(fgets(buffer, sizeof(buffer), stdin));
+	} while (1 > option || option > 4);
+
+	Node* confirm = sortSongs(pHead, option - 1);
+	printf("Your list was sorted and now begins with the song: \"%s\"!\n", confirm->data.songTitle);
+	return true;
+}
+
+/****************************************
+* Sort Songs Via 4 Parameters:
+* - artist, 
+* - album title, 
+* - rating, 
+* - times played (Lg->Sm)
+****************************************/
+Node* sortSongs(Node** pHead, int parameter) {
+
+	int count = 0;
+	Node* pCur = *pHead;
+
+	if (pCur == NULL) return NULL;
+
+	//Count how many nodes are in the list
+	while (pCur != NULL) {
+		count++;
+		pCur = pCur->pNext;
+	}
+
+	// Allocate space for the array of ptrs, and store each node in an array
+	Node** arr = malloc(count * sizeof(Node*));
+	if (arr == NULL) return NULL;
+
+	pCur = *pHead; // reset pCur so it can be used to load the array
+
+	for (int l = 0; l < count; l++) {
+		arr[l] = pCur;
+		pCur = pCur->pNext;
+	}
+
+	pCur = NULL; // reset pCur again so it can be used for swaps
+	// Std bubble sort wrapper - Credit: Geeks for Geeks 
+	bool swapped;
+	bool swap;
+
+	for (int i = 0; i < count; i++) {
+		swapped = false;
+
+		for (int j = 0; j < count - i - 1; j++) {
+			swap = false;
+
+			// switch statement with all comparisons and updates
+			switch (parameter) {
+			case SORT_ARTIST:
+				if (strcmp(arr[j]->data.artist, arr[j + 1]->data.artist) > 0) {
+					swap = true;
+				}
+				break;
+			case SORT_ALBUM:
+				if (strcmp(arr[j]->data.albumTitle, arr[j + 1]->data.albumTitle) > 0) {
+					swap = true;
+				}
+				break;
+			case SORT_RATING:
+				if (arr[j]->data.rating < arr[j + 1]->data.rating) {
+					swap = true;
+				}
+				break;
+			case SORT_TIMES_PLAYED:
+				if (arr[j]->data.timesPlayed < arr[j + 1]->data.timesPlayed) {
+					swap = true;
+				}
+				break;
+			}
+			// If whichever comparison was used indicated to swap, perform it now
+			if (swap) {
+				//swap arr[j] and arr[j+1]
+				pCur = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = pCur;
+				swapped = true;
+			}
+		}
+		if (!swapped) break;
+	}
+
+	// Now rebuild the list
+	// Set pHead to element 1, final node pnext to NULL and first node plast to NULL
+	*pHead = arr[0];
+	arr[0]->pLast = NULL;
+	arr[count - 1]->pNext = NULL;
+
+	//Rebuild links
+	for (int k = 0; k < count - 1; k++) {
+		arr[k]->pNext = arr[k + 1];
+		arr[k + 1]->pLast = arr[k];
+	}
+
+	//don't need the array anymore
+	free(arr);
+
+	return *pHead;
+}
+
+/****************************************
+* Wrapper function for shuffling the array
+* of ints, and then passing in the values to
+* the shuffle player
+****************************************/
+bool shuffleWrapper(Node** pHead) {
+
+	if (pHead == NULL || *pHead == NULL) return false;
+
+	Node* pCur = *pHead;
+	int count = 0, temp = 0;
+
+	//Count # of nodes
+	while (pCur != NULL) {
+		count++;
+		pCur = pCur->pNext;
+	}
+
+	int* arr = randomArrGen(count);
+	if (arr == NULL) return false;
+
+	return playShuffled(pHead, arr, count);
+}
+/****************************************
+* Generate an array of random numbers
+* to be used in conjunction with shuffle
+****************************************/
+int* randomArrGen(int count) {
+
+	int temp = 0;
+	//Initialize an array of nums the size of the array
+	int* arr = (int*)malloc(count * sizeof(int));
+	if (arr == NULL) return NULL;
+
+	for (int i = 0; i < count; i++) {
+		arr[i] = i;
+	}
+
+	/***** CREDIT: GEEKS FOR GEEKS - FISHER-YATES SHUFFLE *****/
+	// Start from last element and swap 1 by 1
+	for (int i = count - 1; i > 0; i--)
+	{
+		// Pick random index 0 -> i
+		int j = rand() % (i + 1);
+		// Swap arr[i] with random index
+		temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+	}
+	/*********************************************************/
+
+	return arr;
+}
+/****************************************
+* Shuffle Songs, utilizes "Fisher-Yates"
+* to shuffle example found on geeks for geeks
+* plays the songs in a randomly shuffled
+* order
+****************************************/
+bool playShuffled(Node** pHead, int* arr, int count) {
+	if (pHead == NULL || *pHead == NULL) return false;
+
+	//Now go through the list and play each entry
+	for (int i = 0; i < count; i++) {
+		Node* pCur = *pHead;
+		int targetNode = arr[i];
+
+		if (pCur == NULL) return false;
+		
+		// Jump to the position in the list (this is wildly inefficient but its what the spec wanted, I couldve just directly shuffled the indexes and rebuilt the list)
+		for (int loc = 0; loc < targetNode; loc++) {
+			pCur = pCur->pNext;
+		}
+
+		printf("Playing: %s\n Artist: %s\n Album: %s\n", pCur->data.songTitle, pCur->data.artist, pCur->data.albumTitle);
+		// A small delay animation, just printing . . . . with 200 ms gaps 3 times
+		for (int j = 0; j < 3; j++) {
+			for (int k = 0; k < 5; k++) {
+				printf(".");
+				delay(200);
+			}
+		}
+
+		system("cls");
+	}
+
+	free(arr); //Free the array of nums, as we no longer need it
+	return true;
+}
+
+void runMenu(Node** pHead)
+{
+	char buffer[10];
+	int choice = 0;
+
+	do {
+		printf("=-(-)-= MAIN MENU =-(-)-=\n");
+		printf("1: Load\n");
+		printf("2: Store\n");
+		printf("3: Display\n");
+		printf("4: Insert\n");
+		printf("5: Delete\n");
+		printf("6: Edit\n");
+		printf("7: Sort\n");
+		printf("8: Rate\n");
+		printf("9: Play\n");
+		printf("10: Shuffle\n");
+		printf("11: Exit\n");
+
+		choice = atoi(fgets(buffer, sizeof(buffer), stdin));
+		system("cls");
+
+		switch (choice) {
+
+		case 1:
+			load(pHead);
+			break;
+		case 2:
+			store(*pHead);
+			break;
+		case 3:
+			displayInteraction(*pHead);
+			break;
+
+		case 4:
+			insertInteraction(pHead);
+			break;
+		case 5:
+			deleteInteraction(pHead);
+			break;
+		case 6:
+			editInteraction(pHead);
+			break;
+		case 7:
+			sortInteraction(pHead);
+			break;
+		case 8:
+			rate(pHead);
+			break;
+		case 9:
+			playInteraction(pHead);
+			break;
+		case 10:
+			shuffleWrapper(pHead);
+			break;
+		case 11:
+			exitProg(*pHead);
+			break;
+		default:
+			printf("That input isn't an option!\n");
+			break;
+		}
+
+	} while (choice != 11);
+
 }

@@ -15,13 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExercisePlan.h">
+    <ClInclude Include="BSTNode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DietPlan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FitnessAppWrapper.h">
+    <ClInclude Include="BST.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,22 +26,8 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DietPlan.cpp">
+    <ClCompile Include="BST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExercisePlan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FitnessAppWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="dietPlans.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="exercisePlans.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

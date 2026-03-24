@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{22dd0557-ac8a-4184-93c2-e7660c8d9425}</ProjectGuid>
-    <RootNamespace>BFullerPA2</RootNamespace>
+    <ProjectGuid>{dfec5e52-dffe-4910-a494-f78fddc37476}</ProjectGuid>
+    <RootNamespace>Quiz6</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -123,18 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="functions.c" />
-    <ClCompile Include="header.h" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="test.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="musicPlayList.csv">
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="test.h" />
+    <ClCompile Include="Quiz6.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

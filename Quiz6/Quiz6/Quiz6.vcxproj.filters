@@ -15,36 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExercisePlan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DietPlan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FitnessAppWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Quiz6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DietPlan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExercisePlan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FitnessAppWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="dietPlans.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="exercisePlans.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "header.hpp"
+#include "FitnessAppWrapper.h"
 
 /****************************************
 * Author: Blayne Fuller
@@ -12,5 +12,6 @@
 * and diet plans
 ****************************************/
 int main(void) {
-
+	FitnessAppWrapper wrapper = FitnessAppWrapper();
+	wrapper.runApp();
 }

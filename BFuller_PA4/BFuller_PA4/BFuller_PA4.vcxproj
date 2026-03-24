@@ -123,10 +123,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="header.hpp" />
+    <ClInclude Include="DietPlan.h" />
+    <ClInclude Include="ExercisePlan.h" />
+    <ClInclude Include="FitnessAppWrapper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DietPlan.cpp" />
+    <ClCompile Include="ExercisePlan.cpp" />
+    <ClCompile Include="FitnessAppWrapper.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dietPlans.txt" />
+    <Text Include="exercisePlans.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
